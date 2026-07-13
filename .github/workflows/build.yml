@@ -1,14 +1,11 @@
-name: Build
-on: [push, workflow_dispatch]
+name: Build A133
+on: push
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt install -y gcc-arm-none-eabi
-      - run: grep -r "MACH_SUN50I_A133\|CONFIG_MACH_SUN50I_A133" arch/arm/mach-sunxi/ | head -5
-      - run: find configs -name "*a133*" -o -name "*A133*" | head -5
-      - run: make liontron-h-a133l_defconfig 2>&1 || true
-</｜｜DSML｜｜parameter>
-</｜｜DSML｜｜invoke>
-</｜｜DSML｜｜tool_calls>
+      - run: find configs -name "*a133*" -o -name "*A133*" 2>/dev/null
+      - run: grep -rl "MACH_SUN50I_A133" configs/ 2>/dev/null || echo "none"
+      - run: grep -rl "sun50i.a133" arch/arm/dts/ 2>/dev/null | head -3
