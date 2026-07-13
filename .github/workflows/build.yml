@@ -7,9 +7,12 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo apt install -y gcc-aarch64-linux-gnu libgnutls28-dev
       - run: make liontron-h-a133l_defconfig
-      - run: make CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc) spl/u-boot-spl.bin
-      - run: ls -la spl/u-boot-spl.bin
+      - run: make CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc) spl/u-boot-spl.bin tools/mksunxiboot
+      - run: tools/mksunxiboot spl/u-boot-spl.bin spl/sunxi-spl.bin
+      - run: ls -la spl/sunxi-spl.bin spl/u-boot-spl.bin
       - uses: actions/upload-artifact@v4
         with:
           name: u-boot-a133-spl
-          path: spl/u-boot-spl.bin
+          path: |
+            spl/sunxi-spl.bin
+            spl/u-boot-spl.bin
