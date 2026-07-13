@@ -5,7 +5,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt install -y gcc-arm-none-eabi
-      - run: find configs -name "*a133*" -o -name "*A133*" 2>/dev/null
-      - run: grep -rl "MACH_SUN50I_A133" configs/ 2>/dev/null || echo "none"
-      - run: grep -rl "sun50i.a133" arch/arm/dts/ 2>/dev/null | head -3
+      - run: sudo apt install -y gcc-arm-none-eabi device-tree-compiler python3-setuptools swig
+      - run: make liontron-h-a133l_defconfig
+      - run: make CROSS_COMPILE=arm-none-eabi- -j$(nproc)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: u-boot-a133
+          path: u-boot-sunxi-with-spl.bin
