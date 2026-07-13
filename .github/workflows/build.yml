@@ -7,6 +7,9 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo apt install -y gcc-aarch64-linux-gnu libgnutls28-dev
       - run: make liontron-h-a133l_defconfig
+      - run: |
+          echo "CONFIG_SPL_TEXT_BASE=0x30000" >> .config
+          make olddefconfig
       - run: make CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc) spl/u-boot-spl.bin u-boot.bin
       - run: ls -la spl/u-boot-spl.bin u-boot.bin
       - uses: actions/upload-artifact@v4
