@@ -40,29 +40,15 @@ ENTRY(return_to_fel)
 	adr	x1, fel_stash_addr	// to find the fel_stash address in AA32
 	str	w2, [x1]
 
-	ldr	w0, =0xfa50392f		// CPU hotplug magic
-#if defined(CONFIG_MACH_SUN50I_H616) || defined(CONFIG_MACH_SUN50I_A133) || \
-    defined(CONFIG_MACH_SUN55I_A523)
-	ldr	w2, =(SUNXI_R_CPUCFG_BASE + 0x1c0)
-	str	w0, [x2], #0x4
-#elif defined(CONFIG_MACH_SUN50I_H6)
-	ldr	w2, =(SUNXI_RTC_BASE + 0x1b8)	// BOOT_CPU_HP_FLAG_REG
-	str	w0, [x2], #0x4
-#else
-	ldr	w2, =(SUNXI_CPUCFG_BASE + 0x1a4) // offset for CPU hotplug base
-	str	w0, [x2, #0x8]
-#endif
+	// Use eret to switch to AArch32 WITHOUT CPU reset
+	// This avoids USB re-enumeration on FEL return
 	adr	x0, back_in_32
-	str	w0, [x2]
-
+	msr	elr_el3, x0
+	mov	x0, #0xD6		// AArch32 Monitor mode, IRQ/FIQ masked
+	msr	spsr_el3, x0
 	dsb	sy
 	isb	sy
-	mov	x0, #2			// RMR reset into AArch32
-	dsb	sy
-	msr	RMR_EL3, x0
-	isb	sy
-1:	wfi
-	b	1b
+	eret
 
 fel_stash_addr:			// must immediately precede back_in_32:
 	.word   0x00000000	// receives fel_stash addr, by AA64 code above
