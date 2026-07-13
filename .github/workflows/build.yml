@@ -9,6 +9,7 @@ jobs:
       - run: make liontron-h-a133l_defconfig
       - run: |
           echo "CONFIG_SPL_TEXT_BASE=0x30000" >> .config
+          echo "CONFIG_SUNXI_SRAM_ADDRESS=0x30000" >> .config
           make olddefconfig
       - run: make CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc) spl/u-boot-spl.bin u-boot.bin
       - run: ls -la spl/u-boot-spl.bin u-boot.bin
