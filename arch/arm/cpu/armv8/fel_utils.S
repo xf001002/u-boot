@@ -44,7 +44,7 @@ ENTRY(return_to_fel)
 	// This avoids USB re-enumeration on FEL return
 	adr	x0, back_in_32
 	msr	elr_el3, x0
-	mov	x0, #0xD6		// AArch32 Monitor mode, IRQ/FIQ masked
+	mov	x0, #0xC6		// AArch32 Monitor mode, IRQ/FIQ masked
 	msr	spsr_el3, x0
 	dsb	sy
 	isb	sy
