@@ -42,6 +42,11 @@ ENTRY(return_to_fel)
 
 	// Use eret to switch to AArch32 WITHOUT CPU reset
 	// This avoids USB re-enumeration on FEL return
+	// Disable MMU first - AArch32 can't use AArch64 page tables
+	mrs	x1, sctlr_el3
+	bic	x1, x1, #1		// Clear M bit (disable MMU)
+	msr	sctlr_el3, x1
+	isb
 	adr	x0, back_in_32
 	msr	elr_el3, x0
 	mov	x0, #0xC6		// AArch32 Monitor mode, IRQ/FIQ masked
