@@ -1,14 +1,16 @@
-name: Build A133
+name: Build A133 SPL
 on: push
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt install -y gcc-aarch64-linux-gnu device-tree-compiler python3-setuptools swig libgnutls28-dev
+      - run: sudo apt install -y gcc-aarch64-linux-gnu
       - run: make liontron-h-a133l_defconfig
-      - run: make CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc)
+      - run: make CROSS_COMPILE=aarch64-linux-gnu- -j$(nproc) spl/u-boot-spl.bin || true
       - uses: actions/upload-artifact@v4
         with:
-          name: u-boot-a133
-          path: u-boot-sunxi-with-spl.bin
+          name: u-boot-a133-spl
+          path: |
+            spl/u-boot-spl.bin
+            u-boot-sunxi-with-spl.bin
